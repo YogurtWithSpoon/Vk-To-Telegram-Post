@@ -32,7 +32,7 @@ async function messageHandler(msg) {
 	}
 
 	if(attachments.length === 0) {
-		await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, caption, captionOptions);
+		return await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, caption, captionOptions);
 	}
 
 	const isMediaGroup = attachments.length > 1;
