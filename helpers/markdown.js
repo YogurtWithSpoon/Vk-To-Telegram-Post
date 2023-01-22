@@ -4,7 +4,7 @@ function doMarkdownBreaks(text){
   
 function doMarkdownLinks(text) {
     return text.replace(/\[(.*?)\|(.*?)\]/g, function(match, p1, p2) {
-        return `<a href="${p1}">${p2}</a>`
+        return `<a href="https://outlawstore.co">${p2}</a>`
     });
 }
 
