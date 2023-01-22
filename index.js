@@ -23,17 +23,19 @@ easyvk({
 });
 
 async function messageHandler(msg) {
-	const { text, attachments = false } = msg.object;
+	const { text, attachments = [] } = msg.object;
 
-	if (!attachments) return;
-
-	const isMediaGroup = attachments.length > 1;
 	const caption = doMarkdownLinks(doMarkdownBreaks(text));
 	const captionOptions = {
 		parse_mode: 'HTML',
 		disable_web_page_preview: true
 	}
 
+	if(attachments.length === 0) {
+		await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, caption, captionOptions);
+	}
+
+	const isMediaGroup = attachments.length > 1;
 
 	if (isMediaGroup) {
 		const photos = attachments.map((photo, index) => {
