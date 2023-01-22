@@ -3,7 +3,7 @@ const easyvk = require('easyvk');
 const express = require('express');
 const app = express();
 const TelegramBot = require('node-telegram-bot-api');
-const { doMarkdownLinks, doMarkdownLinks } = require('./helpers/markdown');
+const { doMarkdownLinks, doMarkdownBreaks } = require('./helpers/markdown');
 const { getBestQualityPhoto } = require('./helpers/utils');
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
