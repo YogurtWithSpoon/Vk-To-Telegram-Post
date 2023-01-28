@@ -24,9 +24,10 @@ easyvk({
 
 async function messageHandler(msg) {
 	const { text, attachments = [] } = msg.object;
-	const footerText = `\nЗаказывайте на <a href="https://outlawstore.co">сайте</a> или просто напишите нам в <a href="https://t.me/outlaworder">телеграм</a>`
-
-	const caption = doMarkdownLinks(doMarkdownBreaks(text)) + footerText;
+	
+	let caption = doMarkdownLinks(doMarkdownBreaks(text));
+	const footerText = `<i>Заказывайте на <a href="https://outlawstore.co">сайте</a> или просто напишите нам в <a href="https://t.me/outlawstore_spb">телеграм</a></i>`
+	caption = caption.replace('#outlawstore', footerText);
 
 	const captionOptions = {
 		parse_mode: 'HTML',
