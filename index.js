@@ -8,15 +8,21 @@ const { getBestQualityPhoto } = require('./helpers/utils');
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
 
+const http = require('http');
+const ngrok = require('@ngrok/ngrok');
+
+const PORT = process.env.PORT || 4000
+const NGROK_AUTH_TOKEN = process.env.NGROK_AUTH_TOKEN
+
 easyvk({
   access_token: process.env.GROUP_TOKEN
 }).then(async (vk) => {
 
   let connection = await vk.callbackAPI.listen({
-    port: process.env.PORT || 4000,
+    port: PORT,
     path: '/webhook',
     confirmCode: process.env.WEBHOOK_CODE,
-    app
+    app,
   })
 
   connection.on("wall_post_new", messageHandler);
@@ -62,3 +68,11 @@ async function messageHandler(msg) {
 		);
 	}
 }
+
+ngrok
+	.connect({ 
+		addr: PORT, 
+		authtoken: NGROK_AUTH_TOKEN,
+		domain: 'magical-seemingly-scorpion.ngrok-free.app',
+	})
+	.then(listener => console.log(`Ingress established at: ${listener.url()}`));
