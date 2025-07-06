@@ -12,9 +12,9 @@
   "dependencies": {
     "@ngrok/ngrok": "^1.4.1",
     "dotenv": "^16.0.3",
-    "easyvk": "^2.8.2",
     "express": "^4.18.2",
-    "node-telegram-bot-api": "^0.60.0"
+    "node-telegram-bot-api": "^0.60.0",
+    "vk-io": "^4.9.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
