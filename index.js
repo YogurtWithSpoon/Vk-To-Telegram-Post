@@ -1,5 +1,5 @@
 require('dotenv').config();
-const easyvk = require('easyvk');
+const { API, Upload, Updates } = require('vk-io');
 const express = require('express');
 const app = express();
 const TelegramBot = require('node-telegram-bot-api');
@@ -12,24 +12,10 @@ const http = require('http');
 const ngrok = require('@ngrok/ngrok');
 
 const PORT = process.env.PORT || 4000
-const NGROK_AUTH_TOKEN = process.env.NGROK_AUTH_TOKEN
-
-easyvk({
-  access_token: process.env.GROUP_TOKEN
-}).then(async (vk) => {
-
-  let connection = await vk.callbackAPI.listen({
-    port: PORT,
-    path: '/webhook',
-    confirmCode: process.env.WEBHOOK_CODE,
-    app,
-  })
-
-  connection.on("wall_post_new", messageHandler);
-});
+const {NGROK_AUTH_TOKEN, TELEGRAM_CHAT_ID, GROUP_TOKEN, GROUP_ID, WEBHOOK_SECRET} = process.env;
 
 async function messageHandler(msg) {
-	const { text, attachments = [] } = msg.object;
+	const { text, attachments = [] } = msg;
 	
 	let caption = doMarkdownLinks(doMarkdownBreaks(text));
 	const footerText = `<i>Заказывайте на <a href="https://outlawstore.co">сайте</a> или просто напишите нам в <a href="https://t.me/outlawstore_spb">телеграм</a></i>`
@@ -41,7 +27,7 @@ async function messageHandler(msg) {
 	}
 
 	if(attachments.length === 0) {
-		return await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, caption, captionOptions);
+		return await bot.sendMessage(TELEGRAM_CHAT_ID, caption, captionOptions);
 	}
 
 	const isMediaGroup = attachments.length > 1;
@@ -56,10 +42,10 @@ async function messageHandler(msg) {
 			};
 		});
 
-		await bot.sendMediaGroup(process.env.TELEGRAM_CHAT_ID, photos);
+		await bot.sendMediaGroup(TELEGRAM_CHAT_ID, photos);
 	} else {
 		await bot.sendPhoto(
-			process.env.TELEGRAM_CHAT_ID, 
+			TELEGRAM_CHAT_ID, 
 			getBestQualityPhoto(attachments[0]), 
 			{
 				caption: caption,
@@ -68,6 +54,37 @@ async function messageHandler(msg) {
 		);
 	}
 }
+
+const api = new API({
+    token: GROUP_TOKEN,
+});
+
+const upload = new Upload({
+    api
+});
+
+api.groups.getCallbackConfirmationCode({group_id: GROUP_ID}).then(data => {
+	const {code} = data;
+	
+	const updates = new Updates({
+		api,
+		upload,
+		webhookConfirmation: code,
+		webhookSecret: WEBHOOK_SECRET,
+	});
+
+	updates.on('wall_post_new', async (context) => {
+		const post = context.wall;
+		await messageHandler(post)
+	});
+
+	app.post('/webhook', updates.getWebhookCallback());
+})
+
+/* Start Server */
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 ngrok
 	.connect({ 

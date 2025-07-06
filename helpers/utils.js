@@ -1,7 +1,4 @@
-function getBestQualityPhoto(photo) {
-	const {
-		photo: { sizes },
-	} = photo;
+function getBestQualityPhoto({sizes}) {
 	let bestQualityLink = null;
 	let max = 0;
 
