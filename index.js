@@ -18,7 +18,7 @@ async function messageHandler(msg) {
 	const { text, attachments = [] } = msg;
 	
 	let caption = doMarkdownLinks(doMarkdownBreaks(text));
-	const footerText = `<i>Заказывайте на <a href="https://outlawstore.co">сайте</a> или просто напишите нам в <a href="https://t.me/outlawstore_spb">телеграм</a></i>`
+	const footerText = `<i>Для заказа напишите нам в <a href="https://t.me/outlawstore_admin">телеграм</a></i>`
 	caption = caption.replace('#outlawstore', footerText);
 
 	const captionOptions = {
